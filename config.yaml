@@ -1,1 +1,2 @@
-SLACK_WEBHOOK : 'YOUR-SLACK-WEBHOOK-URL-HERE'
+LARK_WEBHOOK : 'YOUR-SLACK-WEBHOOK-URL-HERE'
+#https://open.larksuite.com/open-apis/bot/v2/hook/xxx-xxx-xxxx-xxx-xx
