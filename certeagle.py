@@ -8,8 +8,9 @@ import requests
 import json
 
 
+
 # certstream websocket URL 
-url='wss://certstream.calidog.io/'
+url='ws://127.0.0.1/'
 
 # domain list to monitor
 domains_yaml = os.path.dirname(os.path.realpath(__file__))+'/domains.yaml'
@@ -17,22 +18,21 @@ domains_yaml = os.path.dirname(os.path.realpath(__file__))+'/domains.yaml'
 # output file 
 found_domains_path = os.path.dirname(os.path.realpath(__file__))+'/output/found-domains.log'
 
-# function to send slack notifications
-def slack_notifier(unique_subdomains):
-    webhook_url = webhook['SLACK_WEBHOOK']
+# function to send lark notifications
+def lark_notifier(unique_subdomains):
+    webhook_url = webhook['LARK_WEBHOOK']
 
-    # data to send in slack notifications
-    slack_data = {
-        'username' : 'certeagle-bot' , 
-        'channel': '#subdomain-monitor' , 
-        'text': 
-            "🔴 CertEagle Alert : \n\n" + "✔️ Domain matched : " + str(len(unique_subdomains)) + "\n\n" +'\n'.join(unique_subdomains) 
+    # data to send in LARK notifications
+    lark_data = {
+        'msg_type' : 'text' , 
+        'content':{'text':"🔴 CertEagle Alert : \n\n" + "✔️ Domain matched : " + str(len(unique_subdomains)) + "\n\n" +'\n'.join(unique_subdomains)
+        }
         }
     
-    #print(slack_data)
+    #print(lark_data)
     
     response = requests.post(
-	    webhook_url, data=json.dumps(slack_data),
+	    webhook_url, data=json.dumps(lark_data),
 	    headers={'Content-Type': 'application/json'}
 	)
 
@@ -68,7 +68,7 @@ def parse_results(all_domains_found):
 
 
         # checking if a hook url is supplied , if yes then sending notifications
-        if webhook['SLACK_WEBHOOK'].startswith("https://hooks.slack.com/"):
+        if webhook['LARK_WEBHOOK'].startswith("https://open.larksuite.com/"):
             for t in unique_subdomains:
                 try:
                     #open and match 
@@ -78,7 +78,7 @@ def parse_results(all_domains_found):
                             pass
                         else:
                             #send notifications
-                            slack_notifier(unique_subdomains)
+                            lark_notifier(unique_subdomains)
                             with open('already-seen.log' , 'a') as writer:
                                 writer.write('\n'.join(unique_subdomains))
                                 writer.write('\n')
@@ -118,7 +118,7 @@ if __name__ == "__main__":
     with open('config.yaml', 'r') as f:
         try:
             webhook  = yaml.safe_load(f)
-            # access var : webhook['SLACK_WEBHOOK']
+            # access var : webhook['LARK_WEBHOOK']
         except yaml.YAMLError as err:
             print(err)
 
@@ -136,10 +136,10 @@ if __name__ == "__main__":
 
     # displaying basic information
     print("\u001b[32m[INFO]\u001b[0m No of domains/Keywords to monitor  " + str(len(domain_list['domains'])))
-    if webhook['SLACK_WEBHOOK'].startswith("https://"):
-        print("\u001b[32m[INFO]\u001b[0m Slack Notifications Status - \u001b[32;1mON\u001b[0m")
+    if webhook['LARK_WEBHOOK'].startswith("https://"):
+        print("\u001b[32m[INFO]\u001b[0m lark Notifications Status - \u001b[32;1mON\u001b[0m")
     else:
-        print("\u001b[32m[INFO]\u001b[0m Slack Notifications Status - \u001b[31;1mOFF\u001b[0m")
+        print("\u001b[32m[INFO]\u001b[0m lark Notifications Status - \u001b[31;1mOFF\u001b[0m")
 
 
 
