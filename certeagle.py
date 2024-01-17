@@ -10,7 +10,7 @@ import json
 
 
 # certstream websocket URL 
-url='ws://127.0.0.1/'
+url='wss://certstream.calidog.io/'
 
 # domain list to monitor
 domains_yaml = os.path.dirname(os.path.realpath(__file__))+'/domains.yaml'
